@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/api/stations")
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
-public class BikeAPI {
+public class BikeStationAPI {
 
     private final JdbcClient jdbcClient;
 
