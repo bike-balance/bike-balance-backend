@@ -38,6 +38,7 @@ out/
 
 ### sql ###
 /user.sql
+/bike_station.sql
 
 ### env ###
 .env
