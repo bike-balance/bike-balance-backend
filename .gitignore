@@ -38,3 +38,6 @@ out/
 
 ### sql ###
 /user.sql
+
+### env ###
+.env
