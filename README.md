@@ -169,20 +169,59 @@ Response `200 OK`
 }
 ```
 
-공개 회원가입으로 생성되는 계정은 항상 `USER` 권한을 가집니다. 관리자 계정은 DB에서
-`role` 값을 `ADMIN`으로 직접 지정하며, `/api/admin/**` 경로는 관리자만 접근할 수 있습니다.
+공개 회원가입으로 생성되는 계정은 항상 `USER` 권한을 가집니다. 최초 `SUPER_ADMIN`은
+DB에서 직접 지정합니다. `/api/admin/**`는 `ADMIN`과 `SUPER_ADMIN`이 접근할 수 있고,
+`/api/super-admin/**`는 `SUPER_ADMIN`만 접근할 수 있습니다.
 
 기존 `users` 테이블에는 서버 실행 전에 권한 컬럼을 추가해야 합니다.
 
 ```sql
 ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'USER';
-ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('USER', 'ADMIN'));
+ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('USER', 'ADMIN', 'SUPER_ADMIN'));
 ```
 
-관리자로 지정할 계정은 비밀번호를 BCrypt 해시로 저장하고 `role`을 `ADMIN`으로 설정합니다.
+최초 슈퍼 관리자로 지정할 계정은 비밀번호를 BCrypt 해시로 저장한 뒤 DB에서 직접 지정합니다.
 
 ```sql
-UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
+UPDATE users SET role = 'SUPER_ADMIN' WHERE email = 'super-admin@example.com';
+```
+
+이미 기존의 `USER`, `ADMIN` 제약조건을 적용했다면 아래처럼 교체합니다.
+
+```sql
+ALTER TABLE users DROP CONSTRAINT users_role_check;
+ALTER TABLE users ADD CONSTRAINT users_role_check
+    CHECK (role IN ('USER', 'ADMIN', 'SUPER_ADMIN'));
+```
+
+### 사용자 권한 변경
+
+`SUPER_ADMIN`만 호출할 수 있으며 대상 권한은 `USER` 또는 `ADMIN`만 허용됩니다.
+본인이나 다른 `SUPER_ADMIN`의 권한은 이 API로 변경할 수 없습니다.
+
+```http
+PATCH /api/super-admin/users/{userId}/role
+Authorization: Bearer {super-admin-token}
+Content-Type: application/json
+```
+
+Request
+
+```json
+{
+  "role": "ADMIN"
+}
+```
+
+Response `200 OK`
+
+```json
+{
+  "userId": 2,
+  "username": "manager",
+  "email": "manager@example.com",
+  "role": "ADMIN"
+}
 ```
 
 ### 현재 지도 영역 대여소 조회

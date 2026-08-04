@@ -24,7 +24,18 @@ public class UserPrincipal implements UserDetails {
     @Override
     @NonNull
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
+        return switch (user.getRole()) {
+            case USER -> List.of(new SimpleGrantedAuthority("ROLE_USER"));
+            case ADMIN -> List.of(
+                    new SimpleGrantedAuthority("ROLE_USER"),
+                    new SimpleGrantedAuthority("ROLE_ADMIN")
+            );
+            case SUPER_ADMIN -> List.of(
+                    new SimpleGrantedAuthority("ROLE_USER"),
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_SUPER_ADMIN")
+            );
+        };
     }
 
     @Override

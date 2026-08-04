@@ -49,4 +49,11 @@ public class User {
         this.email = email;
         this.role = UserRole.USER;
     }
+
+    public void changeRole(UserRole role) {
+        if (role != UserRole.USER && role != UserRole.ADMIN) {
+            throw new IllegalArgumentException("Only USER or ADMIN can be assigned through the API");
+        }
+        this.role = role;
+    }
 }
