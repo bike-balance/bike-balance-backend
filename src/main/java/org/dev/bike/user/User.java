@@ -2,6 +2,8 @@ package org.dev.bike.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,6 +35,10 @@ public class User {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private UserRole role;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -41,5 +47,6 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.role = UserRole.USER;
     }
 }

@@ -136,6 +136,7 @@ Response `201 Created`
   "userId": 1,
   "username": "tester",
   "email": "tester@example.com",
+  "role": "USER",
   "token": "jwt-token"
 }
 ```
@@ -163,8 +164,25 @@ Response `200 OK`
   "userId": 1,
   "username": "tester",
   "email": "tester@example.com",
+  "role": "USER",
   "token": "jwt-token"
 }
+```
+
+공개 회원가입으로 생성되는 계정은 항상 `USER` 권한을 가집니다. 관리자 계정은 DB에서
+`role` 값을 `ADMIN`으로 직접 지정하며, `/api/admin/**` 경로는 관리자만 접근할 수 있습니다.
+
+기존 `users` 테이블에는 서버 실행 전에 권한 컬럼을 추가해야 합니다.
+
+```sql
+ALTER TABLE users ADD COLUMN role VARCHAR(20) NOT NULL DEFAULT 'USER';
+ALTER TABLE users ADD CONSTRAINT users_role_check CHECK (role IN ('USER', 'ADMIN'));
+```
+
+관리자로 지정할 계정은 비밀번호를 BCrypt 해시로 저장하고 `role`을 `ADMIN`으로 설정합니다.
+
+```sql
+UPDATE users SET role = 'ADMIN' WHERE email = 'admin@example.com';
 ```
 
 ### 현재 지도 영역 대여소 조회
