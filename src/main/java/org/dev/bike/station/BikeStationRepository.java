@@ -58,4 +58,27 @@ public class BikeStationRepository {
                 .query(BikeStationDetail.class)
                 .optional();
     }
+
+    // 가까운 대여소 조회 쿼리 ( PostGIS )
+    public List<BikeStationNearbyResponse> findNearbyStations(double lat, double lng, int limit) {
+        return jdbcClient.sql("""
+                        SELECT
+                            id,
+                            rent_nm,
+                            ST_Y(geom) AS lat,
+                            ST_X(geom) AS lng,
+                            ST_Distance(
+                                geom::geography,
+                                ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography
+                            ) AS distance_meters
+                        FROM bike_station
+                        ORDER BY geom <-> ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
+                        LIMIT :limit
+                        """)
+                .param("lat", lat)
+                .param("lng", lng)
+                .param("limit", limit)
+                .query(BikeStationNearbyResponse.class)
+                .list();
+    }
 }

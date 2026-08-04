@@ -38,6 +38,17 @@ public class BikeStationService {
         return BikeStationDetailResponse.from(station, realtimeBikeCount);
     }
 
+    public List<BikeStationNearbyResponse> findNearbyStations(double lat, double lng, Integer limit) {
+        validateCoordinate(lat, lng);
+
+        int normalizedLimit = limit == null ? 5 : limit;
+        if (normalizedLimit < 1 || normalizedLimit > 20) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "조회 개수는 1개 이상 20개 이하만 가능합니다.");
+        }
+
+        return bikeStationRepository.findNearbyStations(lat, lng, normalizedLimit);
+    }
+
     private void validateBounds(double south, double west, double north, double east) {
         if (!Double.isFinite(south) || !Double.isFinite(west) || !Double.isFinite(north) || !Double.isFinite(east)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "지도 범위가 올바르지 않습니다.");
@@ -50,6 +61,18 @@ public class BikeStationService {
         }
         if (south > north || west > east) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "지도 범위가 올바르지 않습니다.");
+        }
+    }
+
+    private void validateCoordinate(double lat, double lng) {
+        if (!Double.isFinite(lat) || !Double.isFinite(lng)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "좌표가 올바르지 않습니다.");
+        }
+        if (lat < -90 || lat > 90) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "위도 범위가 올바르지 않습니다.");
+        }
+        if (lng < -180 || lng > 180) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "경도 범위가 올바르지 않습니다.");
         }
     }
 }

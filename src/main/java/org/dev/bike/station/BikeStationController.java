@@ -27,6 +27,15 @@ public class BikeStationController {
     ) {
         return bikeStationService.findStationsInBounds(south, west, north, east);
     }
+    // 현재 위치 기반 가까운 대여소 5곳 조회 api
+    @GetMapping("/nearby")
+    public List<BikeStationNearbyResponse> findNearbyStations(
+            @RequestParam double lat,
+            @RequestParam double lng,
+            @RequestParam(required = false) Integer limit
+    ) {
+        return bikeStationService.findNearbyStations(lat, lng, limit);
+    }
 
     @GetMapping("/{id}")
     public BikeStationDetailResponse findStationDetail(@PathVariable Long id) {
