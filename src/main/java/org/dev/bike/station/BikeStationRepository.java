@@ -13,6 +13,12 @@ public class BikeStationRepository {
 
     private final JdbcClient jdbcClient;
 
+    public long count() {
+        return jdbcClient.sql("SELECT COUNT(*) FROM bike_station")
+                .query(Long.class)
+                .single();
+    }
+
     public List<BikeStationMarkerResponse> findStationsInBounds(
             double south,
             double west,

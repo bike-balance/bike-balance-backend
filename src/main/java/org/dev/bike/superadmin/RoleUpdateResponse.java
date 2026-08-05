@@ -1,4 +1,7 @@
-package org.dev.bike.user;
+package org.dev.bike.superadmin;
+
+import org.dev.bike.user.User;
+import org.dev.bike.user.UserRole;
 
 public record RoleUpdateResponse(
         Long userId,

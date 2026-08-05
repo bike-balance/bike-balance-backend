@@ -1,7 +1,13 @@
-package org.dev.bike.user;
+package org.dev.bike.superadmin;
 
 import lombok.RequiredArgsConstructor;
+import org.dev.bike.user.User;
+import org.dev.bike.user.UserRepository;
+import org.dev.bike.user.UserRole;
 import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,7 +17,21 @@ import org.springframework.web.server.ResponseStatusException;
 @Transactional(readOnly = true)
 public class RoleManagementService {
 
+    private static final int PAGE_SIZE = 10;
+
     private final UserRepository userRepository;
+
+    public UserPageResponse getUsers(int page) {
+        if (page < 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Page must be zero or greater");
+        }
+
+        Page<User> users = userRepository.findAll(
+                PageRequest.of(page, PAGE_SIZE, Sort.by(Sort.Direction.DESC, "userId"))
+        );
+
+        return UserPageResponse.from(users);
+    }
 
     @Transactional
     public RoleUpdateResponse updateRole(Long actorUserId, Long targetUserId, UserRole requestedRole) {
