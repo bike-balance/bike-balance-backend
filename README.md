@@ -13,6 +13,7 @@
 - 현재 로그인 사용자의 최신 정보와 권한 조회
 - 지도 화면 영역에 포함된 대여소 조회
 - 현재 위치에서 가까운 대여소 조회
+- 현재 위치의 기온, 강수량 및 하늘 상태 조회
 - 대여소 상세 정보 및 실시간 자전거 대수 조회
 
 </details>
@@ -168,6 +169,7 @@ JWT_SECRET={base64_encoded_jwt_secret}
 JWT_EXPIRATION_MILLIS=3600000
 
 SEOUL_BIKE_API_KEY={seoul_open_api_key}
+KMA_WEATHER_API_KEY={data_go_kr_kma_api_key}
 
 REDIS_HOST=localhost
 REDIS_PORT=6379
@@ -231,6 +233,7 @@ REDIS_PORT=6379
   - `/api/users/register`
   - `/api/users/login`
   - `/api/stations/**`
+  - `/api/weather/current?lat={latitude}&lng={longitude}`
 - 로그인 필요
   - `/api/users/me`
 - `ADMIN` 이상
