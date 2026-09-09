@@ -200,6 +200,35 @@ REDIS_PORT=6379
 </details>
 
 <details>
+<summary><strong>Docker로 실행</strong></summary>
+
+
+이미지를 빌드합니다.
+
+```bash
+docker build -t bike-backend .
+```
+
+프로젝트의 `.env` 파일을 런타임 환경 변수로 전달해 실행합니다.
+
+```bash
+docker run --rm \
+  --name bike-backend \
+  --env-file .env \
+  -p 8080:8080 \
+  bike-backend
+```
+
+컨테이너에서 호스트의 PostgreSQL과 Redis에 접속한다면 `.env`의 호스트명을 `localhost` 대신 `host.docker.internal`로 지정해야 합니다.
+
+```properties
+DB_URL=jdbc:postgresql://host.docker.internal:5432/{database_name}
+REDIS_HOST=host.docker.internal
+```
+
+</details>
+
+<details>
 <summary><strong>5. 테스트 실행</strong></summary>
 
 

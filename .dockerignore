@@ -1,0 +1,14 @@
+.git
+.gitignore
+.gradle
+.idea
+build
+*.iml
+*.log
+.DS_Store
+.env
+.env.*
+Dockerfile*
+README.md
+HELP.md
+*.sql
